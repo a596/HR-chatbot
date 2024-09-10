@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+</head>
+<body>
+    <h1>Admin Page</h1>
+
+    <!-- Link to go back to the admin dashboard -->
+    <a href="{{ url_for('admin') }}">Back to Admin Dashboard</a><br>
+
+    <!-- Link to go back to the main chat interface -->
+    <a href="{{ url_for('index') }}">Back to Chat</a>
+
+    <!-- Section to view attendance records -->
+    <h2>View Attendance Records</h2>
+    <form action="{{ url_for('admin') }}" method="POST">
+        <label for="user_id">User ID:</label>
+        <input type="text" id="user_id" name="user_id" required>
+        <button type="submit" name="view">View Records</button>
+    </form>
+
+    <!-- Section to view and update a specific attendance record -->
+    {% if attendance_record %}
+    <h2>Update Attendance Record for {{ attendance_record.user_id }}</h2>
+    <form action="{{ url_for('admin') }}" method="POST">
+        <!-- Hidden input to retain the user ID -->
+        <input type="hidden" name="user_id" value="{{ attendance_record.user_id }}">
+
+        <!-- Total Allocated Sick Leaves -->
+        <label for="total_allocated_sick_leaves">Total Allocated Sick Leaves:</label>
+        <input type="number" id="total_allocated_sick_leaves" name="total_allocated_sick_leaves" value="{{ attendance_record['total allocated sick leaves'] }}" required><br>
+
+        <!-- Total Availed Sick Leaves -->
+        <label for="total_availed_sick_leaves">Total Availed Sick Leaves:</label>
+        <input type="number" id="total_availed_sick_leaves" name="total_availed_sick_leaves" value="{{ attendance_record['total availed sick leaves'] }}" required><br>
+
+        <!-- Total Allocated Annual Leaves -->
+        <label for="total_allocated_annual_leaves">Total Allocated Annual Leaves:</label>
+        <input type="number" id="total_allocated_annual_leaves" name="total_allocated_annual_leaves" value="{{ attendance_record['total allocated annual leaves'] }}" required><br>
+
+        <!-- Total Availed Annual Leaves -->
+        <label for="total_availed_annual_leaves">Total Availed Annual Leaves:</label>
+        <input type="number" id="total_availed_annual_leaves" name="total_availed_annual_leaves" value="{{ attendance_record['total availed annual leaves'] }}" required><br>
+
+        <!-- Total Allocated Work From Home Leaves -->
+        <label for="total_allocated_wfh_leaves">Total Allocated Work From Home:</label>
+        <input type="number" id="total_allocated_wfh_leaves" name="total_allocated_wfh_leaves" value="{{ attendance_record['total allocated wfh leaves'] }}" required><br>
+
+        <!-- Total Availed Work From Home Leaves -->
+        <label for="total_availed_wfh_leaves">Total Availed Work From Home:</label>
+        <input type="number" id="total_availed_wfh_leaves" name="total_availed_wfh_leaves" value="{{ attendance_record['total availed wfh leaves'] }}" required><br>
+
+        <!-- Total Allocated Casual Leaves -->
+        <label for="total_allocated_casual_leaves">Total Allocated Casual Leaves:</label>
+        <input type="number" id="total_allocated_casual_leaves" name="total_allocated_casual_leaves" value="{{ attendance_record['total allocated casual leaves'] }}" required><br>
+
+        <!-- Total Availed Casual Leaves -->
+        <label for="total_availed_casual_leaves">Total Availed Casual Leaves:</label>
+        <input type="number" id="total_availed_casual_leaves" name="total_availed_casual_leaves" value="{{ attendance_record['total availed casual leaves'] }}" required><br>
+
+        <!-- Total Allocated Extra Leaves -->
+        <label for="total_allocated_extra_leaves">Total Allocated Extra Leaves:</label>
+        <input type="number" id="total_allocated_extra_leaves" name="total_allocated_extra_leaves" value="{{ attendance_record['total allocated extra leaves'] }}" required><br>
+
+        <!-- Total Availed Extra Leaves -->
+        <label for="total_availed_extra_leaves">Total Availed Extra Leaves:</label>
+        <input type="number" id="total_availed_extra_leaves" name="total_availed_extra_leaves" value="{{ attendance_record['total availed extra leaves'] }}" required><br>
+
+        <!-- Total Remaining Annual Leaves -->
+        <label for="total_remaining_annual_leaves">Total Remaining Annual Leaves:</label>
+        <input type="number" id="total_remaining_annual_leaves" name="total_remaining_annual_leaves" value="{{ attendance_record['total remaining annual leaves'] }}" required><br>
+
+        <!-- Total Remaining Casual Leaves -->
+        <label for="total_remaining_casual_leaves">Total Remaining Casual Leaves:</label>
+        <input type="number" id="total_remaining_casual_leaves" name="total_remaining_casual_leaves" value="{{ attendance_record['total remaining casual leaves'] }}" required><br>
+
+        <!-- Total Remaining Extra Leaves -->
+        <label for="total_remaining_extra_leaves">Total Remaining Extra Leaves:</label>
+        <input type="number" id="total_remaining_extra_leaves" name="total_remaining_extra_leaves" value="{{ attendance_record['total remaining extra leaves'] }}" required><br>
+
+        <!-- Total Remaining Sick Leaves -->
+        <label for="total_remaining_sick_leaves">Total Remaining Sick Leaves:</label>
+        <input type="number" id="total_remaining_sick_leaves" name="total_remaining_sick_leaves" value="{{ attendance_record['total remaining sick leaves'] }}" required><br>
+
+        <!-- Total Remaining Work From Home Leaves -->
+        <label for="total_remaining_wfh_leaves">Total Remaining Work From Home Leaves:</label>
+        <input type="number" id="total_remaining_wfh_leaves" name="total_remaining_wfh_leaves" value="{{ attendance_record['total remaining wfh leaves'] }}" required><br>
+
+        <!-- Employee Status -->
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="Probation" {% if attendance_record.status == 'Probation' %}selected{% endif %}>Probation</option>
+            <option value="Permanent" {% if attendance_record.status == 'Permanent' %}selected{% endif %}>Permanent</option>
+            <option value="Contract" {% if attendance_record.status == 'Contract' %}selected{% endif %}>Contract</option>
+        </select><br>
+
+        <button type="submit" name="add_update">Add/Update Record</button>
+    </form>
+    {% endif %}
+
+    <!-- Section displaying all attendance records -->
+    <h2>All Attendance Records</h2>
+    <ul>
+        {% for record in attendance_records %}
+            <li>{{ record.user_id }}: {{ record['total remaining sick leaves'] }} sick leaves remaining, {{ record['total remaining annual leaves'] }} annual leaves remaining, {{ record['total remaining wfh leaves'] }} WFH days remaining</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
