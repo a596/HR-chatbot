@@ -4,6 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
+    <script>
+        function updateRemainingLeaves() {
+            const allocatedSick = parseFloat(document.getElementById('total_allocated_sick_leaves').value) || 0;
+            const availedSick = parseFloat(document.getElementById('total_availed_sick_leaves').value) || 0;
+            document.getElementById('total_remaining_sick_leaves').value = allocatedSick - availedSick;
+
+            const allocatedAnnual = parseFloat(document.getElementById('total_allocated_annual_leaves').value) || 0;
+            const availedAnnual = parseFloat(document.getElementById('total_availed_annual_leaves').value) || 0;
+            document.getElementById('total_remaining_annual_leaves').value = allocatedAnnual - availedAnnual;
+
+            const allocatedWFH = parseFloat(document.getElementById('total_allocated_wfh_leaves').value) || 0;
+            const availedWFH = parseFloat(document.getElementById('total_availed_wfh_leaves').value) || 0;
+            document.getElementById('total_remaining_wfh_leaves').value = allocatedWFH - availedWFH;
+
+            const allocatedCasual = parseFloat(document.getElementById('total_allocated_casual_leaves').value) || 0;
+            const availedCasual = parseFloat(document.getElementById('total_availed_casual_leaves').value) || 0;
+            document.getElementById('total_remaining_casual_leaves').value = allocatedCasual - availedCasual;
+
+            const allocatedExtra = parseFloat(document.getElementById('total_allocated_extra_leaves').value) || 0;
+            const availedExtra = parseFloat(document.getElementById('total_availed_extra_leaves').value) || 0;
+            document.getElementById('total_remaining_extra_leaves').value = allocatedExtra - availedExtra;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name^="total_"]').forEach(input => {
+                input.addEventListener('input', updateRemainingLeaves);
+            });
+
+            updateRemainingLeaves(); // Initial calculation
+        });
+    </script>
 </head>
 <body>
     <h1>Admin Page</h1>
@@ -71,23 +102,23 @@
 
         <!-- Total Remaining Annual Leaves -->
         <label for="total_remaining_annual_leaves">Total Remaining Annual Leaves:</label>
-        <input type="number" id="total_remaining_annual_leaves" name="total_remaining_annual_leaves" value="{{ attendance_record['total remaining annual leaves'] }}" required><br>
+        <input type="number" id="total_remaining_annual_leaves" name="total_remaining_annual_leaves" value="{{ attendance_record['total remaining annual leaves'] }}" readonly><br>
 
         <!-- Total Remaining Casual Leaves -->
         <label for="total_remaining_casual_leaves">Total Remaining Casual Leaves:</label>
-        <input type="number" id="total_remaining_casual_leaves" name="total_remaining_casual_leaves" value="{{ attendance_record['total remaining casual leaves'] }}" required><br>
+        <input type="number" id="total_remaining_casual_leaves" name="total_remaining_casual_leaves" value="{{ attendance_record['total remaining casual leaves'] }}" readonly><br>
 
         <!-- Total Remaining Extra Leaves -->
         <label for="total_remaining_extra_leaves">Total Remaining Extra Leaves:</label>
-        <input type="number" id="total_remaining_extra_leaves" name="total_remaining_extra_leaves" value="{{ attendance_record['total remaining extra leaves'] }}" required><br>
+        <input type="number" id="total_remaining_extra_leaves" name="total_remaining_extra_leaves" value="{{ attendance_record['total remaining extra leaves'] }}" readonly><br>
 
         <!-- Total Remaining Sick Leaves -->
         <label for="total_remaining_sick_leaves">Total Remaining Sick Leaves:</label>
-        <input type="number" id="total_remaining_sick_leaves" name="total_remaining_sick_leaves" value="{{ attendance_record['total remaining sick leaves'] }}" required><br>
+        <input type="number" id="total_remaining_sick_leaves" name="total_remaining_sick_leaves" value="{{ attendance_record['total remaining sick leaves'] }}" readonly><br>
 
         <!-- Total Remaining Work From Home Leaves -->
         <label for="total_remaining_wfh_leaves">Total Remaining Work From Home Leaves:</label>
-        <input type="number" id="total_remaining_wfh_leaves" name="total_remaining_wfh_leaves" value="{{ attendance_record['total remaining wfh leaves'] }}" required><br>
+        <input type="number" id="total_remaining_wfh_leaves" name="total_remaining_wfh_leaves" value="{{ attendance_record['total remaining wfh leaves'] }}" readonly><br>
 
         <!-- Employee Status -->
         <label for="status">Status:</label>
@@ -99,6 +130,9 @@
 
         <button type="submit" name="add_update">Add/Update Record</button>
     </form>
+    {% else %}
+    <!-- Message if no attendance record found -->
+    <p>No attendance record found. Please use the form above to view a record.</p>
     {% endif %}
 
     <!-- Section displaying all attendance records -->
