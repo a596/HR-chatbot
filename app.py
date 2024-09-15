@@ -35,8 +35,8 @@ app.secret_key = os.urandom(24)  # Required for flashing messages
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'ethicalgan@gmail.com'
-app.config['MAIL_PASSWORD'] = 'rehg hjfx tauh zrof'
+app.config['MAIL_USERNAME'] = ''
+app.config['MAIL_PASSWORD'] = ''
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -437,7 +437,7 @@ def send_email(recipient, subject, body):
 
 
 # Set the Groq API Key
-GROQ_API_KEY = "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"
+GROQ_API_KEY = ""
 os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 
 client = Groq()
