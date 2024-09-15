@@ -608,96 +608,42 @@ def index():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    if not session.get('is_admin'):
-        flash('Access denied.')
-        return redirect(url_for('index'))
-
-    # Fetch default values from the attendance collection
-    default_values = mongo.db.attendance.find_one({'user_id': 'defaults'}) or {
-        'total allocated sick leaves': 10,
-        'total allocated annual leaves': 10,
-        'total allocated wfh leaves': 2,
-        'total allocated casual leaves': 10,
-        'total allocated extra leaves': 10,
-        'status': 'probation'
-    }
+    attendance_record = None
+    attendance_records = []
 
     if request.method == 'POST':
-        if 'update_defaults' in request.form:
-            # Update default values
-            mongo.db.attendance.update_one(
-                {'user_id': 'defaults'},
-                {'$set': {
-                    'total allocated sick leaves': float(request.form['default sick leaves']),
-                    'total allocated annual leaves': float(request.form['default annual leaves']),
-                    'total allocated wfh leaves': float(request.form['default wfh leaves']),
-                    'total allocated casual leaves': float(request.form['default casual leaves']),
-                    'total allocated extra leaves': float(request.form['default extra leaves']),
-                    'status': request.form.get('default status', 'probation')
-                }},
-                upsert=True
-            )
-            flash('Default values updated successfully.')
-
-        elif 'add_update' in request.form:
-            # Adding or updating attendance record
-            user_id = request.form['user_id']
-            total_allocated_sick_leaves = float(request.form.get('total allocated sick leaves', default_values['total allocated sick leaves']))
-            total_availed_sick_leaves = float(request.form.get('total availed sick leaves', 0))
-            total_allocated_annual_leaves = float(request.form.get('total allocated annual leaves', default_values['total allocated annual leaves']))
-            total_availed_annual_leaves = float(request.form.get('total availed annual leaves', 0))
-            total_allocated_wfh_leaves = float(request.form.get('total allocated wfh leaves', default_values['total allocated wfh leaves']))
-            total_availed_wfh_leaves = float(request.form.get('total availed wfh leaves', 0))
-            total_allocated_casual_leaves = float(request.form.get('total allocated casual leaves', default_values['total allocated casual leaves']))
-            total_availed_casual_leaves = float(request.form.get('total availed casual leaves', 0))
-            total_allocated_extra_leaves = float(request.form.get('total allocated extra leaves', default_values['total allocated extra leaves']))
-            total_availed_extra_leaves = float(request.form.get('total availed extra leaves', 0))
-            total_remaining_annual_leaves = total_allocated_annual_leaves - total_availed_annual_leaves
-            total_remaining_casual_leaves = total_allocated_casual_leaves - total_availed_casual_leaves
-            total_remaining_extra_leaves = total_allocated_extra_leaves - total_availed_extra_leaves
-            total_remaining_sick_leaves = total_allocated_sick_leaves - total_availed_sick_leaves
-            total_remaining_wfh_leaves = total_allocated_wfh_leaves - total_availed_wfh_leaves
-            status = request.form.get('status', default_values['status'])
-            
-            mongo.db.attendance.update_one(
-                {'user_id': user_id},
-                {'$set': {
-                    'total allocated sick leaves': total_allocated_sick_leaves,
-                    'total availed sick leaves': total_availed_sick_leaves,
-                    'total allocated annual leaves': total_allocated_annual_leaves,
-                    'total availed annual leaves': total_availed_annual_leaves,
-                    'total allocated wfh leaves': total_allocated_wfh_leaves,
-                    'total availed wfh leaves': total_availed_wfh_leaves,
-                    'total allocated casual leaves': total_allocated_casual_leaves,
-                    'total availed casual leaves': total_availed_casual_leaves,
-                    'total allocated extra leaves': total_allocated_extra_leaves,
-                    'total availed extra leaves': total_availed_extra_leaves,
-                    'total remaining annual leaves': total_remaining_annual_leaves,
-                    'total remaining casual leaves': total_remaining_casual_leaves,
-                    'total remaining extra leaves': total_remaining_extra_leaves,
-                    'total remaining sick leaves': total_remaining_sick_leaves,
-                    'total remaining wfh leaves': total_remaining_wfh_leaves,
-                    'status': status,
-                }},
-                upsert=True
-            )
-            flash('Attendance record added/updated successfully.')
-
-        elif 'view' in request.form:
-            # Viewing a specific attendance record
-            user_id = request.form['user_id']
+        if 'view' in request.form:
+            user_id = request.form.get('user_id')
             attendance_record = mongo.db.attendance.find_one({'user_id': user_id})
-            attendance_records = mongo.db.attendance.find()
-            return render_template('admin.html', 
-                                   attendance_record=attendance_record, 
-                                   attendance_records=attendance_records,
-                                   default_values=default_values)
-    
-    # Fetch all attendance records for display
-    attendance_records = mongo.db.attendance.find()
-    return render_template('admin.html', 
-                           attendance_records=attendance_records,
-                           default_values=default_values)
+        elif 'add_update' in request.form:
+            user_id = request.form.get('user_id')
+            update_data = {
+                'total allocated sick leaves': float(request.form.get('total_allocated_sick_leaves', 0)),
+                'total availed sick leaves': float(request.form.get('total_availed_sick_leaves', 0)),
+                'total allocated annual leaves': float(request.form.get('total_allocated_annual_leaves', 0)),
+                'total availed annual leaves': float(request.form.get('total_availed_annual_leaves', 0)),
+                'total allocated wfh leaves': float(request.form.get('total_allocated_wfh_leaves', 0)),
+                'total availed wfh leaves': float(request.form.get('total_availed_wfh_leaves', 0)),
+                'total allocated casual leaves': float(request.form.get('total_allocated_casual_leaves', 0)),
+                'total availed casual leaves': float(request.form.get('total_availed_casual_leaves', 0)),
+                'total allocated extra leaves': float(request.form.get('total_allocated_extra_leaves', 0)),
+                'total availed extra leaves': float(request.form.get('total_availed_extra_leaves', 0)),
+                'status': request.form.get('status', 'Probation')
+            }
+
+            # Calculate remaining leaves
+            update_data['total remaining annual leaves'] = update_data['total allocated annual leaves'] - update_data['total availed annual leaves']
+            update_data['total remaining casual leaves'] = update_data['total allocated casual leaves'] - update_data['total availed casual leaves']
+            update_data['total remaining extra leaves'] = update_data['total allocated extra leaves'] - update_data['total availed extra leaves']
+            update_data['total remaining sick leaves'] = update_data['total allocated sick leaves'] - update_data['total availed sick leaves']
+            update_data['total remaining wfh leaves'] = update_data['total allocated wfh leaves'] - update_data['total availed wfh leaves']
+
+            mongo.db.attendance.update_one({'user_id': user_id}, {'$set': update_data}, upsert=True)
+
+        # Fetch all attendance records
+        attendance_records = list(mongo.db.attendance.find({}))
+
+    return render_template('admin.html', attendance_record=attendance_record, attendance_records=attendance_records)
 
 
 
