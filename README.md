@@ -1,4 +1,4 @@
-HR Chatbot Using Flask and LangChain: A Professional Web Application
+<h1>HR Chatbot Using Flask and LangChain: A Professional Web Application </h1>
 The HR Chatbot is a robust web application designed to streamline HR-related queries by leveraging cutting-edge AI technology. Built on Flask, the chatbot integrates LangChain to deliver dynamic and accurate responses, offering a seamless user experience for employees and administrators.
 
 Key Features:
