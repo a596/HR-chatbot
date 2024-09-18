@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .message .user {
+            font-weight: bold;
+            color: #007BFF;
+        }
+        .message .bot {
+            font-weight: bold;
+            color: #28A745;
+        }
+        .input-container {
+            display: flex;
+        }
+        .input-container input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-container button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Chatbot Interface</h1>
+        <div class="chat-box" id="chat-box">
+            {% for message in messages %}
+                <div class="message">
+                    <span class="user">{{ message[0] }}</span>: {{ message[1] }}
+                </div>
+            {% endfor %}
+        </div>
+        <form action="/chatbot" method="post" class="input-container">
+            <input type="text" id="question" name="question" placeholder="Type your question here..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // Scroll to the bottom of the chat box when new messages are added
+        function scrollToBottom() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Scroll to the bottom when the page loads
+        window.onload = scrollToBottom;
+
+        // Scroll to the bottom when the form is submitted
+        document.querySelector('form').addEventListener('submit', function() {
+            setTimeout(scrollToBottom, 100);
+        });
+    </script>
+</body>
+</html>
